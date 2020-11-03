@@ -5,11 +5,18 @@
  */
 package view;
 
+import controller.IClientServices;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.rmi.registry.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Processes;
+import java.util.List;
 
 /**
  *
@@ -28,6 +35,7 @@ public class TGroupServer extends JFrame {
     JScrollPane sp1, sp2;
     JTable tb1, tb2;
 
+    public static IClientServices iclientservices; 
     public TGroupServer() {
         initGUI();
         initValue();
@@ -96,7 +104,20 @@ public class TGroupServer extends JFrame {
     }
 
     void initValue() {
-
+        try {
+            Registry regystry = LocateRegistry.getRegistry("localhost", 2020);
+            iclientservices = (IClientServices) regystry.lookup("IClientServices");
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        try {
+            List<Processes> list = iclientservices.update();
+            for (Processes i : list) {
+                System.out.println(i.getProcessName()+"\t"+i.getProcessNum()+"\t"+i.getProcessMem());
+            }
+        } catch (RemoteException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     void initEvent() {
