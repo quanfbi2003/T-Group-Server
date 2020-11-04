@@ -158,8 +158,4 @@ public class TGroupServer extends JFrame {
             }
         });
     }
-
-    public static void main(String[] args) {
-        new TGroupServer().setVisible(true);
-    }
 }
