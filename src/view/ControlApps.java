@@ -53,7 +53,7 @@ public class ControlApps extends JFrame {
         appPn = new JPanel();
         appPn.setLayout(new BorderLayout());
         sp = new JScrollPane();
-        String[] cols = {"Tên", "Tình trạng", "Người sử dụng", "Bắt đầu", "Đã sử dụng", "Ghi chú"};
+        String[] cols = {"Tên tiến trình", "Tổng số tiến trình", "Bộ nhớ sử dụng"};
 
         tm = new DefaultTableModel(cols, 0);
         tb = new JTable(tm);
@@ -84,8 +84,5 @@ public class ControlApps extends JFrame {
             }
         });
     }
-
-    public static void main(String[] args) {
-        new ControlApps().setVisible(true);
-    }
 }
+    
