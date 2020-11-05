@@ -7,10 +7,12 @@ package controller;
 
 import java.rmi.*;
 import model.Accounts;
+import model.Devices;
 /**
  *
  * @author dream
  */
 public interface IServerServices extends Remote{
     public boolean logIn(Accounts accounts) throws RemoteException;
+    public void setStatus(Devices devices) throws RemoteException;
 }

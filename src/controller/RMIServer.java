@@ -14,7 +14,7 @@ import java.rmi.registry.*;
 public class RMIServer {
     private void startServer() {
         try {
-            Registry registry = LocateRegistry.createRegistry(2020);
+            Registry registry = LocateRegistry.createRegistry(2021);
             registry.rebind("IServerServices", new ServerServices());
         } catch (RemoteException ex) {
             System.out.println(ex.getMessage());

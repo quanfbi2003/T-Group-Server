@@ -7,6 +7,7 @@ package controller;
 
 import java.util.List;
 import java.rmi.*;
+import model.Devices;
 import model.Processes;
 /**
  *

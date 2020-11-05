@@ -5,18 +5,16 @@
  */
 package view;
 
-import controller.IClientServices;
+import controller.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.rmi.registry.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.Processes;
 import java.util.List;
+import model.*;
+import java.rmi.registry.*;
+import java.rmi.*;
 
 /**
  *
@@ -35,7 +33,9 @@ public class TGroupServer extends JFrame {
     JScrollPane sp1, sp2;
     JTable tb1, tb2;
 
-    public static IClientServices iclientservices; 
+    public List<Devices> listDevices = new DeviceControl().getDevices();
+    public List<Accounts> listAccounts = new AccountControl().getAccounts();
+
     public TGroupServer() {
         initGUI();
         initValue();
@@ -47,7 +47,7 @@ public class TGroupServer extends JFrame {
         mayTramPn = new JPanel();
         mayTramPn.setLayout(new BorderLayout());
         sp1 = new JScrollPane();
-        String[] cols = {"Tên", "Tình trạng", "Người sử dụng", "Bắt đầu", "Đã sử dụng", "Ghi chú"};
+        String[] cols = {"Device Name", "Status", "Username", "Note"};
 
         tm1 = new DefaultTableModel(cols, 0);
         tb1 = new JTable(tm1);
@@ -59,7 +59,7 @@ public class TGroupServer extends JFrame {
         taiKhoanPn = new JPanel();
         taiKhoanPn.setLayout(new BorderLayout());
         sp2 = new JScrollPane();
-        String[] cols = {"ID", "Tên tài khoản", "Trạng thái", "Mật khẩu", "Bắt đầu", "Đã sử dụng"};
+        String[] cols = {"Username", "Status", "Password", "Note"};
         tm2 = new DefaultTableModel(cols, 0);
         tb2 = new JTable(tm2);
         sp2.setViewportView(tb2);
@@ -70,7 +70,7 @@ public class TGroupServer extends JFrame {
         setSize(1200, 700);
         setLayout(new BorderLayout(5, 5));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
         jMenu = new JMenu("File");
         exit = new JMenuItem("Exit");
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -83,8 +83,8 @@ public class TGroupServer extends JFrame {
 
         buttonPn = new JPanel();
         buttonPn.setLayout(new GridLayout(0, 2, 5, 5));
-        mayTramBt = new JButton("Máy trạm");
-        taiKhoanBt = new JButton("Tài khoản");
+        mayTramBt = new JButton("Clients");
+        taiKhoanBt = new JButton("Accounts");
         mayTramBt.setFont(new java.awt.Font("Tahoma", 0, 36));
         taiKhoanBt.setFont(new java.awt.Font("Tahoma", 0, 36));
         buttonPn.add(mayTramBt);
@@ -95,29 +95,50 @@ public class TGroupServer extends JFrame {
         initTaiKhoanTab();
         add(mayTramPn, BorderLayout.CENTER);
         mayTramBt.setEnabled(false);
-        
+
         dieuKhienPn = new JPanel();
         dieuKhienPn.setLayout(new GridLayout(0, 1, 5, 5));
-        dieuKhienBt = new JButton("Điều khiển ứng dụng");
+        dieuKhienBt = new JButton("Control Applications");
         dieuKhienPn.add(dieuKhienBt);
         add(dieuKhienPn, BorderLayout.EAST);
     }
 
+    public void initAccounts(List<Accounts> list) {
+        tm2.setRowCount(0);
+        for (Accounts i : list) {
+            tm2.addRow(i.toObject());
+        }
+    }
+
+    public void initDevices(List<Devices> list) {
+        tm1.setRowCount(0);
+        for (Devices i : list) {
+            tm1.addRow(i.toObject());
+        }
+    }
+
     void initValue() {
-        try {
-            Registry regystry = LocateRegistry.getRegistry("localhost", 2020);
-            iclientservices = (IClientServices) regystry.lookup("IClientServices");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        try {
-            List<Processes> list = iclientservices.update();
-            for (Processes i : list) {
-                System.out.println(i.getProcessName()+"\t"+i.getProcessNum()+"\t"+i.getProcessMem());
-            }
-        } catch (RemoteException ex) {
-            System.out.println(ex.getMessage());
-        }
+//        try {
+//            Registry regystry = LocateRegistry.getRegistry("localhost", 2020);
+//            iclientservices = (IClientServices) regystry.lookup("IClientServices");
+//        } catch (Exception ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//        try {
+//            Devices device = iclientservices.getDevice();
+//            System.out.println(device.getDeviceName());
+//            System.out.println(device.getDeviceUUID());
+//            List<Processes> list = iclientservices.update();
+//            for (Processes i : list) {
+//                System.out.println(i.getProcessName()+"\t"+i.getProcessNum()+"\t"+i.getProcessMem());
+//            }
+//        } catch (RemoteException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+
+        initDevices(listDevices);
+        initAccounts(listAccounts);
+
     }
 
     void initEvent() {
@@ -147,7 +168,7 @@ public class TGroupServer extends JFrame {
             }
 
         });
-        
+
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,6 +176,13 @@ public class TGroupServer extends JFrame {
                 if (kq == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }
+            }
+        });
+
+        dieuKhienBt.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ControlApps();
             }
         });
     }

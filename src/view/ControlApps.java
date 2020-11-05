@@ -53,7 +53,7 @@ public class ControlApps extends JFrame {
         appPn = new JPanel();
         appPn.setLayout(new BorderLayout());
         sp = new JScrollPane();
-        String[] cols = {"Tên tiến trình", "Tổng số tiến trình", "Bộ nhớ sử dụng"};
+        String[] cols = {"Name", "Number of process", "Memory"};
 
         tm = new DefaultTableModel(cols, 0);
         tb = new JTable(tm);

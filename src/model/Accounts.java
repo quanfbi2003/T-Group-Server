@@ -14,7 +14,9 @@ import java.io.Serializable;
 public class Accounts implements Serializable{
     public static final long serialVersionUID = 2020;
     private String username;
+    private String status = "";
     private String password;
+    private String note = "NULL";
 
     public Accounts() {
     }
@@ -39,6 +41,25 @@ public class Accounts implements Serializable{
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
     
+    public Object[] toObject() {
+        return new Object[] {username, status, password, note};
+    }
     
 }
