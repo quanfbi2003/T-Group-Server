@@ -5,7 +5,6 @@
  */
 package view;
 
-import controller.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,8 +12,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import model.*;
-import java.rmi.registry.*;
-import java.rmi.*;
 
 /**
  *
@@ -27,14 +24,13 @@ public class TGroupServer extends JFrame {
     JMenuItem exit;
 
     JPanel buttonPn, mayTramPn, taiKhoanPn, dieuKhienPn;
-    JButton mayTramBt, taiKhoanBt, dieuKhienBt;
+    JButton mayTramBt, taiKhoanBt;
+    public JButton dieuKhienBt;
 
-    DefaultTableModel tm1, tm2;
+    public DefaultTableModel tm1, tm2;
     JScrollPane sp1, sp2;
-    JTable tb1, tb2;
+    public JTable tb1, tb2;
 
-    public List<Devices> listDevices = new DeviceControl().getDevices();
-    public List<Accounts> listAccounts = new AccountControl().getAccounts();
 
     public TGroupServer() {
         initGUI();
@@ -103,19 +99,9 @@ public class TGroupServer extends JFrame {
         add(dieuKhienPn, BorderLayout.EAST);
     }
 
-    public void initAccounts(List<Accounts> list) {
-        tm2.setRowCount(0);
-        for (Accounts i : list) {
-            tm2.addRow(i.toObject());
-        }
-    }
+    
 
-    public void initDevices(List<Devices> list) {
-        tm1.setRowCount(0);
-        for (Devices i : list) {
-            tm1.addRow(i.toObject());
-        }
-    }
+   
 
     void initValue() {
 //        try {
@@ -136,8 +122,6 @@ public class TGroupServer extends JFrame {
 //            System.out.println(ex.getMessage());
 //        }
 
-        initDevices(listDevices);
-        initAccounts(listAccounts);
 
     }
 
@@ -179,11 +163,6 @@ public class TGroupServer extends JFrame {
             }
         });
 
-        dieuKhienBt.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new ControlApps();
-            }
-        });
+        
     }
 }

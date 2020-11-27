@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import model.Devices;
+import model.Processes;
+import java.util.List;
 
 /**
  *
@@ -22,23 +25,21 @@ public class ControlApps extends JFrame {
     JMenuItem exit;
 
     JPanel killPn, appPn;
-    JButton killBt;
+    public JButton killBt;
 
-    DefaultTableModel tm;
+    public DefaultTableModel tm;
     JScrollPane sp;
-    JTable tb;
-
+    public JTable tb;
+    
     public ControlApps() {
         initGUI();
-        initValue();
         initEvent();
-
     }
 
     void initGUI() {
         setSize(1200, 700);
         setLayout(new BorderLayout(5, 5));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         jMenu = new JMenu("File");
         exit = new JMenuItem("Exit");
@@ -68,9 +69,7 @@ public class ControlApps extends JFrame {
         add(killPn, BorderLayout.EAST);
     }
 
-    void initValue() {
-
-    }
+    
 
     void initEvent() {
 

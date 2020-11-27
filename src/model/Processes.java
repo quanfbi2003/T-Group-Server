@@ -11,8 +11,6 @@ package model;
  */
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -65,20 +63,6 @@ public class Processes implements Serializable{
 
     public void setProcessMem(int processMem) {
         this.processMem = processMem;
-    }
-    
-    public void addProcess(int processMem) {
-        this.processMem+=processMem;
-        this.processNum++;
-    }
-    
-    public Object toObject() {
-        return new Object[] {processName,processNum,String.format("%.1f",processMem/1024.0)+" MB"};
-    }
-    
-    @Override
-    public String toString() {
-        return processName+" "+processNum +" " +String.format("%.1f",processMem/1024.0)+" MB";
     }
 }
 
