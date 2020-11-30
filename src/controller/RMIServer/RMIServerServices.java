@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller.RMI;
+package controller.RMIServer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,9 +13,9 @@ import model.Devices;
  *
  * @author dream
  */
-public class RMIServices extends UnicastRemoteObject implements IServerServices {
+public class RMIServerServices extends UnicastRemoteObject implements IRMIServerServices {
 
-    public RMIServices() throws RemoteException {
+    public RMIServerServices() throws RemoteException {
     }
 
     @Override

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller;
+package controller.RMIClient;
 import java.rmi.registry.*;
+import model.Definitions;
 
 /**
  *
@@ -12,23 +13,19 @@ import java.rmi.registry.*;
  */
 public class LookupServices {
     private String ip;
-    private int port;
-    public static IClientServices iclientservices; 
+    public static IRMIClientServices iRMIServices; 
     
-    public LookupServices() {
-    }
-
-    public LookupServices(String ip, int port) {
+    public LookupServices(String ip) {
         this.ip = ip;
-        this.port = port;
     }
     
-    public boolean connect() throws Exception {
+    public boolean connect() {
         try {
-            Registry registry = LocateRegistry.getRegistry(ip, port);
-            iclientservices = (IClientServices) registry.lookup("IClientServices");
+            Registry registry = LocateRegistry.getRegistry(ip, Definitions.CLIENT_PORT);
+            iRMIServices = (IRMIClientServices) registry.lookup(Definitions.REGISTERED_NAME);
         } catch (Exception ex) {
             return false;
+           
         }
         return true;
     }

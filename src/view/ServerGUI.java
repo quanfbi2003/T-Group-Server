@@ -247,9 +247,6 @@ public class ServerGUI extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void main(String[] args) {
-        new ServerGUI().setVisible(true);
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActivityLogButton;

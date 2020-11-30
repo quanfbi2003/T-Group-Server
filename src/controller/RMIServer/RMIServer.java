@@ -3,22 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller.RMI;
+package controller.RMIServer;
 
+import controller.RMIServer.RMIServerServices;
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
+import model.Definitions;
 /**
  *
  * @author dream
  */
 public class RMIServer {
+    
+    public static RMIServerServices rmiServices;
+    
     public void startServer() {
         try {
-            Registry registry = LocateRegistry.createRegistry(2020);
-            registry.rebind("ServerServices", new RMIServices());
+            Registry registry = LocateRegistry.createRegistry(Definitions.SERVER_PORT);
+            rmiServices = new RMIServerServices();
+            registry.rebind(Definitions.REGISTERED_NAME, rmiServices);
         } catch (RemoteException ex) {
             System.out.println(ex.getMessage());
         }
-        System.out.println("Server is online!");
+        System.out.println("RMIServer is online!");
     }
 }

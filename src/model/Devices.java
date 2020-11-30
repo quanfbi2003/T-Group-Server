@@ -21,11 +21,7 @@ public class Devices implements Serializable {
     private long startTime;
 
     public Devices() {
-        this.deviceName="";
-        this.deviceUUID="";
-        this.ip="";
-        this.startTime=0;
-        this.status="";
+        this.status = Definitions.OFFLINE;
     }
 
     public Devices(String deviceName, String deviceUUID) {

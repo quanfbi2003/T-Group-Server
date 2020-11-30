@@ -5,9 +5,9 @@
  */
 package controller;
 
+import controller.RMIClient.LookupServices;
 import controller.DAO.DbUtils;
-import controller.RMI.RMIServer;
-import controller.RMI.RMIServices;
+import controller.RMIServer.RMIServer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -25,10 +25,8 @@ public class StartServer {
 
     private static RMIServer serverRMI;
     private static LookupServices lookupServies;
-    private static RMIServices rmiServices;
     private static ServerGUI serverGUI;
     private List<Devices> listDevices;
-    private static DbUtils dbUtils;
     private Devices devices;
 
     public StartServer() {
@@ -42,8 +40,9 @@ public class StartServer {
                 serverGUI = new ServerGUI();
                 serverGUI.setVisible(true);
                 listDevices = new ArrayList<>();
-                dbUtils.readFile(listDevices);
-                checkDevices(listDevices);
+                DbUtils.readFile(listDevices);
+                update();
+                checkDevices();
                 registration();
             }
         });
@@ -56,7 +55,7 @@ public class StartServer {
                 serverRMI.startServer();
             }
         });
-//        serverGUIThread.start();
+        serverRMIThread.start();
 
         Thread servicesThread = new Thread(new Runnable() {
             @Override
@@ -79,22 +78,34 @@ public class StartServer {
         timeThread.start();
     }
 
-    private void checkDevices(List<Devices> listDevices) {
-        for (Devices i : listDevices) {
-            new Thread(new Runnable() {
+    private void checkDevices() {
+        for (int i = 0; i < listDevices.size(); i++) {
+            devices = listDevices.get(i);
+            Thread checkDeviceThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    LookupServices lookupServices = new LookupServices();
+                    LookupServices lookupServices = new LookupServices(devices.getIp());
                     try {
                         if (lookupServices.connect()) {
-                            i.setStatus(Definitions.ONLINE);
+                            devices = lookupServices.iRMIServices.getDevice();
+                        } else {
+                            devices.setStatus(Definitions.OFFLINE);
                         }
                     } catch (Exception ex) {
-                        i.setStatus(Definitions.OFFLINE);
+                        devices.setStatus(Definitions.OFFLINE);
                     }
+                    System.out.println(devices.getStartTime());
                 }
-            }).start();
+            });
+            checkDeviceThread.start();
+            try {
+                checkDeviceThread.join();
+            } catch (InterruptedException ex) {
+            }
+            listDevices.get(i).setStatus(devices.getStatus());
+            listDevices.get(i).setStartTime(devices.getStartTime());
         }
+        update();
     }
 
     private void registration() {
@@ -104,24 +115,29 @@ public class StartServer {
             public void actionPerformed(ActionEvent e) {
                 devices.setDeviceUUID(serverGUI.deviceUUID.getText());
                 devices.setIp(serverGUI.ipAddress.getText());
-                devices.setDeviceName("MAY " + (listDevices.size()+1));
+                devices.setDeviceName("MAY " + (listDevices.size() + 1));
                 serverGUI.deviceUUID.setText("");
                 serverGUI.ipAddress.setText("");
                 listDevices.add(devices);
                 update();
                 List<Devices> tmp = new ArrayList<>();
-                dbUtils.readFile(tmp);
+                DbUtils.readFile(tmp);
                 tmp.add(devices);
-                dbUtils.writeFile(tmp);
+                DbUtils.writeFile(tmp);
                 JOptionPane.showMessageDialog(null, "Resgisted Successfully!!!");
             }
         });
     }
 
     private void update() {
+        serverGUI.tbModel.setRowCount(0);
         for (Devices i : listDevices) {
-            serverGUI.tbModel.addRow(new Object[]{i.getDeviceName(), i.getIp(), i.getStatus(), i.getStartTime(), ""});
+            long hour = i.getStartTime()/(1000*60*60);
+            long min = (i.getStartTime()%(1000*60*60))/(1000*60);
+            String startTime = Integer.toString((int) hour) + " : " + Integer.toString((int) min);
+            serverGUI.tbModel.addRow(new Object[]{i.getDeviceName(), i.getIp(), i.getStatus(), startTime, ""});
         }
+        serverGUI.tbModel.setRowCount(20);
     }
 
     public static void main(String[] args) {

@@ -18,13 +18,12 @@ public class DbUtils {
         }
     }
     
-    public static void readFile(List<Devices> list) {
+    public static void readFile(List list) {
         try {
             list.clear();
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(Definitions.DATABASE));
-            Devices o = null;
-            while ((o = (Devices) in.readObject()) != null) list.add(o);
-            System.out.println(list.get(0).getDeviceUUID());
+            Object o = null;
+            while ((o = in.readObject()) != null) list.add(o);
             in.close();
         } catch (Exception e) {
         }

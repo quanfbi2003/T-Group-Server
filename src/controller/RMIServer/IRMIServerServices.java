@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package controller.RMI;
+package controller.RMIServer;
 
 import java.rmi.*;
 import model.Devices;
@@ -11,6 +11,6 @@ import model.Devices;
  *
  * @author dream
  */
-public interface IServerServices extends Remote{
+public interface IRMIServerServices extends Remote{
     public void setStatus(Devices devices) throws RemoteException;
 }

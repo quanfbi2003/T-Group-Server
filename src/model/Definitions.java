@@ -17,6 +17,8 @@ public final class Definitions {
     
     public static final int         SERVER_PORT = 2020;
     public static final int         CLIENT_PORT = 1999;
+    public static final String      SERVER_IP = "127.0.0.1";
+    public static final String      REGISTERED_NAME = "RMIServices";
 //    public static final int        CMD_CLIENT_PORT = 11111;
 //    public static final int        CMD_DESKTOP_PORT = 22222;
 }
