@@ -10,9 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import model.Devices;
-import model.Processes;
-import java.util.List;
 
 /**
  *
@@ -64,7 +61,9 @@ public class ControlApps extends JFrame {
 
         killPn = new JPanel();
         killPn.setLayout(new GridLayout(0, 1, 5, 5));
-        killBt = new JButton("Đóng ứng dụng");
+        killBt = new JButton(" End task");
+        killBt.setFont(new Font(killBt.getFont().getFontName(), killBt.getFont().getStyle(), 30));
+        killBt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/shutdown-icon.png")));
         killPn.add(killBt);
         add(killPn, BorderLayout.EAST);
     }

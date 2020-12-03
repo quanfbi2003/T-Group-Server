@@ -34,11 +34,9 @@ public class ServerGUI extends JFrame {
         AppsButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         btRegister = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         ipAddress = new javax.swing.JTextField();
-        deviceUUID = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         exit = new javax.swing.JMenuItem();
@@ -74,7 +72,7 @@ public class ServerGUI extends JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Computer Name", "IP Address", "Status", "Start Time", "Active Time"
+                "Computer Name", "IP Address", "Status", "Start Time"
             }
         ) {
             Class[] types = new Class [] {
@@ -149,14 +147,12 @@ public class ServerGUI extends JFrame {
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(222, 222, 222))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         TabPane.addTab("Features", jPanel3);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Registration"));
-
-        jLabel2.setText("DeviceUUID");
 
         btRegister.setText("Resgister");
 
@@ -168,27 +164,20 @@ public class ServerGUI extends JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(30, 30, 30)
+                .addComponent(jLabel1)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ipAddress)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(67, 67, 67)
                         .addComponent(btRegister)
-                        .addGap(0, 156, Short.MAX_VALUE))
-                    .addComponent(deviceUUID))
+                        .addGap(0, 156, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(deviceUUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(78, 78, 78)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(ipAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -211,7 +200,7 @@ public class ServerGUI extends JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         TabPane.addTab("Registration", jPanel4);
@@ -250,17 +239,15 @@ public class ServerGUI extends JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActivityLogButton;
-    private javax.swing.JButton AppsButton;
+    public javax.swing.JButton AppsButton;
     private javax.swing.JButton RemoteDesktopButton;
-    private javax.swing.JButton RestartButton;
-    private javax.swing.JButton ShutdownButton;
+    public javax.swing.JButton RestartButton;
+    public javax.swing.JButton ShutdownButton;
     private javax.swing.JTabbedPane TabPane;
     public javax.swing.JButton btRegister;
-    public javax.swing.JTextField deviceUUID;
     private javax.swing.JMenuItem exit;
     public javax.swing.JTextField ipAddress;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

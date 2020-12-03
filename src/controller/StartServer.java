@@ -10,11 +10,17 @@ import controller.DAO.DbUtils;
 import controller.RMIServer.RMIServer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.Definitions;
 import model.Devices;
+import model.Processes;
+import view.ControlApps;
 import view.ServerGUI;
 
 /**
@@ -24,9 +30,11 @@ import view.ServerGUI;
 public class StartServer {
 
     private static RMIServer serverRMI;
-    private static LookupServices lookupServies;
+    private static LookupServices lookupServices;
     private static ServerGUI serverGUI;
+    private static ControlApps controlApps;
     private List<Devices> listDevices;
+    private List<Processes> listProcesses;
     private Devices devices;
 
     public StartServer() {
@@ -42,8 +50,21 @@ public class StartServer {
                 listDevices = new ArrayList<>();
                 DbUtils.readFile(listDevices);
                 update();
-                checkDevices();
                 registration();
+                controlApplication();
+                Thread checkingThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            checkDevices();
+                            try {
+                                Thread.sleep(5000);
+                            } catch (Exception ex) {
+                            }
+                        }
+                    }
+                });
+                checkingThread.start();
             }
         });
         serverGUIThread.start();
@@ -65,17 +86,6 @@ public class StartServer {
         });
         servicesThread.start();
 
-        Thread timeThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                long activeTime = 0;
-                int hour = (int) activeTime / (1000 * 60 * 60);
-                int min = (int) (activeTime % (1000 * 60 * 60)) / (1000 * 60);
-                String activeT = Integer.toString(hour) + ":" + Integer.toString(min);
-
-            }
-        });
-        timeThread.start();
     }
 
     private void checkDevices() {
@@ -90,11 +100,12 @@ public class StartServer {
                             devices = lookupServices.iRMIServices.getDevice();
                         } else {
                             devices.setStatus(Definitions.OFFLINE);
+                            devices.setStartTime("");
                         }
                     } catch (Exception ex) {
                         devices.setStatus(Definitions.OFFLINE);
+                        devices.setStartTime("");
                     }
-                    System.out.println(devices.getStartTime());
                 }
             });
             checkDeviceThread.start();
@@ -113,10 +124,8 @@ public class StartServer {
         serverGUI.btRegister.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                devices.setDeviceUUID(serverGUI.deviceUUID.getText());
                 devices.setIp(serverGUI.ipAddress.getText());
                 devices.setDeviceName("MAY " + (listDevices.size() + 1));
-                serverGUI.deviceUUID.setText("");
                 serverGUI.ipAddress.setText("");
                 listDevices.add(devices);
                 update();
@@ -129,15 +138,118 @@ public class StartServer {
         });
     }
 
+    private void controlApplication() {
+        serverGUI.AppsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = serverGUI.main_table.getSelectedRow();
+                if (row >= 0 && row < listDevices.size()) {
+                    lookupServices = new LookupServices(listDevices.get(row).getIp());
+                    if (lookupServices.connect()) {
+                        controlApps = new ControlApps();
+                        controlApps.setVisible(true);
+                        Thread servicesThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (true) {
+                                    try {
+                                        listProcesses = lookupServices.iRMIServices.update();
+                                        controlApps.tm.setRowCount(0);
+                                        for (Processes i : listProcesses) {
+                                            String processMem = String.format("%.1f", i.getProcessMem() / 1024.0) + " MB";
+                                            controlApps.tm.addRow(new Object[]{i.getProcessName(), i.getProcessNum(), processMem});
+                                        }
+                                        Thread.sleep(10000);
+                                    } catch (Exception ex) {
+                                    }
+                                }
+
+                            }
+                        });
+                        servicesThread.start();
+                        controlApps.killBt.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                int killP = controlApps.tb.getSelectedRow();
+                                if (killP >= 0 && killP < listProcesses.size()) {
+                                    try {
+                                        lookupServices.iRMIServices.killProcess(listProcesses.get(killP));
+                                        controlApps.tm.removeRow(killP);
+                                    } catch (RemoteException ex) {
+                                    }
+                                }
+                            }
+                        });
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Select Client!!!");
+                }
+
+            }
+        });
+
+    }
+
     private void update() {
         serverGUI.tbModel.setRowCount(0);
+        SimpleDateFormat date_format = new SimpleDateFormat("hh:mm:ss");
         for (Devices i : listDevices) {
-            long hour = i.getStartTime()/(1000*60*60);
-            long min = (i.getStartTime()%(1000*60*60))/(1000*60);
-            String startTime = Integer.toString((int) hour) + " : " + Integer.toString((int) min);
-            serverGUI.tbModel.addRow(new Object[]{i.getDeviceName(), i.getIp(), i.getStatus(), startTime, ""});
+            serverGUI.tbModel.addRow(new Object[]{i.getDeviceName(), i.getIp(), i.getStatus(), i.getStartTime()});
         }
         serverGUI.tbModel.setRowCount(20);
+    }
+
+    private void shutdown_and_restart() {
+        serverGUI.ShutdownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = serverGUI.main_table.getSelectedRow();
+                if (row >= 0 && row < listDevices.size()) {
+                    lookupServices = new LookupServices(listDevices.get(row).getIp());
+                    if (lookupServices.connect()) {
+                        int opt = JOptionPane.showConfirmDialog(null, "Do you want to turn off this computer?");
+                        if (opt == 1) {
+                            try {
+                                lookupServices.iRMIServices.shutdown();
+                            } catch (RemoteException ex) {
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Select Client!!!");
+                }
+            }
+        });
+        
+        serverGUI.RestartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int row = serverGUI.main_table.getSelectedRow();
+                if (row >= 0 && row < listDevices.size()) {
+                    lookupServices = new LookupServices(listDevices.get(row).getIp());
+                    if (lookupServices.connect()) {
+                        int opt = JOptionPane.showConfirmDialog(null, "Do you want to restart this computer?");
+                        if (opt == 1) {
+                            try {
+                                lookupServices.iRMIServices.restart();
+                            } catch (RemoteException ex) {
+                            }
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Select Client!!!");
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
