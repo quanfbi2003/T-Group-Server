@@ -14,8 +14,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.*;
 import view.*;
@@ -84,9 +82,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
             @Override
             public void run() {
                 while (true) {
-                    System.out.println("Checking Thread running...");
+                    
                     try {
                         Thread.sleep(5000);
+                        System.out.println("Checking Thread running...");
                         if (!flag) {
                             checkDevices();
                             System.out.println("Checking....");
@@ -105,7 +104,6 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
 
     private void checkDevices() { // Check online devices
         System.out.println("Checking Device running...");
-        boolean flagW = true;
         for (int i = 0; !flag && i < listDevices.size(); i++) {
             devices = listDevices.get(i);
             checkDeviceThread = new Thread(new Runnable() {
@@ -116,10 +114,12 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                     System.out.println(devices.getIp());
                     try {
                         if (!flag && lookupServices.connect()) {
+                            System.out.println("Connected");
                             devices = lookupServices.iRMIServices.getDevice(devices);
                         } else {
                             devices.setStatus(Definitions.OFFLINE);
                             devices.setStartTime("");
+                            System.out.println("Not Connected");
                         }
                     } catch (Exception ex) {
                         devices.setStatus(Definitions.OFFLINE);
@@ -137,7 +137,6 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
             listDevices.get(i).setStatus(devices.getStatus());
             listDevices.get(i).setStartTime(devices.getStartTime());
             System.out.println(devices.getStatus());
-            flagW = false;
             update();
         }
         System.out.println("Checking Device Done!");
@@ -242,11 +241,9 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                         });
 
                     } else {
-                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
                         flag = false;
                     }
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select Client!!!");
                     flag = false;
                 }
 
@@ -282,12 +279,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                             }
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
                         flag = false;
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select Client!!!");
                     flag = false;
                 }
 
@@ -311,12 +306,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                             }
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
                         flag = false;
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select Client!!!");
                     flag = false;
                 }
 
@@ -373,12 +366,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                             }
                         });
                     } else {
-                        JOptionPane.showMessageDialog(null, "Client is OFFLINE");
                         flag = false;
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(null, "Select Client!!!");
                     flag = false;
                 }
             }
@@ -434,12 +425,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                                 });
                                 flag = false;
                             } else {
-                                JOptionPane.showMessageDialog(null, "Client is OFFLINE");
                                 flag = false;
                             }
 
                         } else {
-                            JOptionPane.showMessageDialog(null, "Select Client!!!");
                             flag = false;
                         }
                     }

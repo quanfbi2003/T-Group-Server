@@ -3,9 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/My_Works/Java/T-Group-Server/src/view/ServerGUI.java</file>
-            <file>file:/D:/My_Works/Java/T-Group-Server/src/view/BlacklistGUI.java</file>
-            <file>file:/D:/My_Works/Java/T-Group-Server/src/controller/StartServer.java</file>
+            <file>file:/D:/My_Works/Java/T-Group-Server/src/controller/Server/ServerServices.java</file>
         </group>
     </open-files>
 </project-private>
