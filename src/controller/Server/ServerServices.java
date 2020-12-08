@@ -6,13 +6,16 @@
 package controller.Server;
 
 import controller.DAO.DbUtils;
+import controller.remote.*;
 import controller.Client.LookupServices;
-import controller.remote.InitConnection;
 import java.awt.event.*;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.*;
 import view.*;
@@ -26,11 +29,14 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
     private static ServerGUI serverGUI;
     private static BlacklistGUI blacklistGUI;
     private static ControlApps controlApps;
+    private static StartRemote startRemote;
+
     private List<Devices> listDevices;
     private List<Processes> listProcesses;
     private Devices devices;
     private Devices devicesReg;
     private Thread checkingThread;
+    private Thread checkDeviceThread;
     private boolean flag = false;
 
     public ServerServices() throws RemoteException {
@@ -41,6 +47,7 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
         Thread serverGUIThread = new Thread(new Runnable() { // Constructer Thread
             @Override
             public void run() {
+                System.out.println("Constructer Thread Running....");
                 flag = true;
                 serverGUI = new ServerGUI();
                 serverGUI.setVisible(true);
@@ -52,9 +59,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                 blackList_feature();
                 remote();
                 update();
+                System.out.println("Constructer Thread Done!");
             }
         });
-        
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -63,7 +71,10 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                     System.out.println(++i);
                     try {
                         Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
+                        if (i == 3) {
+                            flag = false;
+                        }
+                    } catch (Exception ex) {
                     }
                 }
             }
@@ -73,13 +84,15 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
             @Override
             public void run() {
                 while (true) {
+                    System.out.println("Checking Thread running...");
                     try {
+                        Thread.sleep(5000);
                         if (!flag) {
                             checkDevices();
                             System.out.println("Checking....");
                         }
                         System.out.println("Flag....." + flag);
-                        Thread.sleep(5000);
+                        System.out.println("Checking Thread Done!");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -87,22 +100,20 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
             }
         });
         serverGUIThread.start();
-        try {
-            serverGUIThread.join();
-        } catch (InterruptedException ex) {
-        }
         checkingThread.start();
-        flag = false;
     }
 
     private void checkDevices() { // Check online devices
-        boolean flagW = false;
+        System.out.println("Checking Device running...");
+        boolean flagW = true;
         for (int i = 0; !flag && i < listDevices.size(); i++) {
             devices = listDevices.get(i);
-            Thread checkDeviceThread = new Thread(new Runnable() {
+            checkDeviceThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    System.out.println("Checking Device Thread running...");
                     LookupServices lookupServices = new LookupServices(devices.getIp());
+                    System.out.println(devices.getIp());
                     try {
                         if (!flag && lookupServices.connect()) {
                             devices = lookupServices.iRMIServices.getDevice(devices);
@@ -114,6 +125,7 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                         devices.setStatus(Definitions.OFFLINE);
                         devices.setStartTime("");
                     }
+                    System.out.println("Checking Device Thread Done!");
                 }
             });
             checkDeviceThread.start();
@@ -121,17 +133,14 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                 checkDeviceThread.join();
             } catch (InterruptedException ex) {
             }
+
             listDevices.get(i).setStatus(devices.getStatus());
             listDevices.get(i).setStartTime(devices.getStartTime());
             System.out.println(devices.getStatus());
-            flagW = true;
+            flagW = false;
+            update();
         }
-        while (true) {
-            if (flagW) {
-                update();
-                break;
-            }
-        }
+        System.out.println("Checking Device Done!");
     }
 
     private void registration() { // Registration feature
@@ -146,10 +155,9 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                 DbUtils.readFile(listDevices);
                 listDevices.add(devicesReg);
                 DbUtils.writeFile(listDevices);
+                update();
                 flag = false;
-                checkDevices();
                 JOptionPane.showMessageDialog(null, "Resgisted Successfully!!!");
-
             }
         });
     }
@@ -385,23 +393,66 @@ public class ServerServices extends UnicastRemoteObject implements IRMIServerSer
                 Thread remoteThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        new InitConnection(Definitions.REMOTE_PORT);
+                        int row = serverGUI.main_table.getSelectedRow();
+                        if (row >= 0 && row < listDevices.size()) {
+                            LookupServices lookupServices = new LookupServices(listDevices.get(row).getIp());
+                            if (lookupServices.connect()) {
+                                startRemote = new StartRemote();
+                                startRemote.initialize(listDevices.get(row).getIp(), Definitions.REMOTE_PORT);
+                                startRemote.createFrame.frame.addWindowListener(new WindowListener() {
+                                    @Override
+                                    public void windowOpened(WindowEvent e) {
+                                    }
+
+                                    @Override
+                                    public void windowClosing(WindowEvent e) {
+                                        try {
+                                            startRemote.sc.close();
+                                        } catch (IOException ex) {
+                                        }
+                                    }
+
+                                    @Override
+                                    public void windowClosed(WindowEvent e) {
+                                    }
+
+                                    @Override
+                                    public void windowIconified(WindowEvent e) {
+                                    }
+
+                                    @Override
+                                    public void windowDeiconified(WindowEvent e) {
+                                    }
+
+                                    @Override
+                                    public void windowActivated(WindowEvent e) {
+                                    }
+
+                                    @Override
+                                    public void windowDeactivated(WindowEvent e) {
+                                    }
+                                });
+                                flag = false;
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Client is OFFLINE");
+                                flag = false;
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Select Client!!!");
+                            flag = false;
+                        }
                     }
                 });
                 remoteThread.start();
-                int row = serverGUI.main_table.getSelectedRow();
-                LookupServices lookupServices = new LookupServices(listDevices.get(row).getIp());
-                if (lookupServices.connect()) {
-                    try {
-                        lookupServices.iRMIServices.remote();
-                        flag = false;
-                    } catch (RemoteException ex) {
-                    }
-                } else {
-                    flag = false;
+
+                try {
+                    remoteThread.join();
+                } catch (InterruptedException ex) {
                 }
             }
         });
+
     }
 
     @Override
