@@ -37,7 +37,6 @@ class SendEvents implements KeyListener, MouseMotionListener, MouseListener{
 			//Prepare PrintWriter which will be used to send commands to the client
 			writer = new PrintWriter(cSocket.getOutputStream());
 			} catch(IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 

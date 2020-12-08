@@ -47,7 +47,6 @@ public class CreateFrame extends Thread {
             //Initially show the internal frame maximized
             interFrame.setMaximum(true);
         } catch (PropertyVetoException ex) {
-            ex.printStackTrace();
         }
 
         //This allows to handle KeyListener events
@@ -65,7 +64,6 @@ public class CreateFrame extends Thread {
         try {
             in = cSocket.getInputStream();
         } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         //Start receiving screenshots

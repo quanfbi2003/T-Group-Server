@@ -42,7 +42,6 @@ class ReceiveScreen extends Thread{
 			}
 
 		} catch(IOException ex) {
-			ex.printStackTrace();
 		}
 	}
 }

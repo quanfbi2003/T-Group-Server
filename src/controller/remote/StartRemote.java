@@ -20,7 +20,6 @@ public class StartRemote {
             height = verification.readUTF();
             createFrame = new CreateFrame(sc, width, height);
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 }
