@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
  * @author dream
  */
 public class ControlApps extends JFrame {
-
+    
     JMenuBar jMenuBar;
     JMenu jMenu;
     JMenuItem exit;
@@ -30,7 +30,6 @@ public class ControlApps extends JFrame {
     
     public ControlApps() {
         initGUI();
-        initEvent();
     }
 
     void initGUI() {
@@ -66,21 +65,6 @@ public class ControlApps extends JFrame {
         killBt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/shutdown-icon.png")));
         killPn.add(killBt);
         add(killPn, BorderLayout.EAST);
-    }
-
-    
-
-    void initEvent() {
-
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int kq = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đóng!!!", "Đóng", JOptionPane.YES_NO_OPTION);
-                if (kq == JOptionPane.YES_OPTION) {
-                    dispose();
-                }
-            }
-        });
     }
 }
     

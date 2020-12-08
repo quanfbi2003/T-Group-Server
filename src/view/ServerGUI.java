@@ -31,6 +31,7 @@ public class ServerGUI extends JFrame {
         ShutdownButton = new javax.swing.JButton();
         RestartButton = new javax.swing.JButton();
         ActivityLogButton = new javax.swing.JButton();
+        BlacklistBt = new javax.swing.JButton();
         AppsButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -127,6 +128,16 @@ public class ServerGUI extends JFrame {
         ActivityLogButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(ActivityLogButton);
 
+        BlacklistBt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/log_in.png"))); // NOI18N
+        BlacklistBt.setText("Blacklist");
+        BlacklistBt.setFocusable(false);
+        BlacklistBt.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        BlacklistBt.setMaximumSize(new java.awt.Dimension(85, 23));
+        BlacklistBt.setMinimumSize(new java.awt.Dimension(85, 23));
+        BlacklistBt.setPreferredSize(new java.awt.Dimension(85, 23));
+        BlacklistBt.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(BlacklistBt);
+
         AppsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/model/icon/Apps-system-software-update-icon.png"))); // NOI18N
         AppsButton.setText("Application");
         AppsButton.setFocusable(false);
@@ -138,8 +149,10 @@ public class ServerGUI extends JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 708, Short.MAX_VALUE)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 728, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,7 +204,7 @@ public class ServerGUI extends JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(90, Short.MAX_VALUE)
+                .addContainerGap(110, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(199, 199, 199))
         );
@@ -240,7 +253,8 @@ public class ServerGUI extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ActivityLogButton;
     public javax.swing.JButton AppsButton;
-    private javax.swing.JButton RemoteDesktopButton;
+    public javax.swing.JButton BlacklistBt;
+    public javax.swing.JButton RemoteDesktopButton;
     public javax.swing.JButton RestartButton;
     public javax.swing.JButton ShutdownButton;
     private javax.swing.JTabbedPane TabPane;
